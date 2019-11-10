@@ -7,4 +7,95 @@ html {
     font-size: 120%
 }
 
-#kotodaman1
+#buttons1 {
+    margin-top: 1%;
+}
+
+#kotodaman1 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman2 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman3 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman4 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman5 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman6 {
+    height: 20%;
+    width: 10%;
+}
+
+#buttons2 {
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+#kotodaman7 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman8 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman9 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman10 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman11 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman12 {
+    height: 20%;
+    width: 10%;
+}
+
+#kotodaman1 {
+    height: 20%;
+    width: 10%;
+}
+
+#resetButtons {
+    margin-top: 20%;
+}
+
+#resetAllButton {
+    height: 20%;
+    width: 10%;
+}
+
+#resetExceptPartyButton {
+    height: 20%;
+    width: 10%;
+}
+
+#undoButton {
+    height: 20%;
+    width: 10%;
+}
