@@ -73,4 +73,10 @@ function resetExceptParty() {
     document.getElementById('sentence').innerHTML = "1ターン目の1番目に出したコトダマンのボタンを押してください．";
 }
 
+function undo() {
+    if (kotodamanNumber < 12 && kotodamanNumber > 1) {
+        kotodamanNumber--;
+    }
+}
+
 
