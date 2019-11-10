@@ -9,6 +9,7 @@ function enterKotodamanName(){
             let elementID = 'kotodaman' + kotodamanNumber + '_name';
             document.getElementById(elementID).innerHTML = document.forms.id_form1.input.value;
             kotodamanNumber++;
+            document.forms.id_form1.input.value = '';
             if (kotodamanNumber == 13) {
                 document.getElementById('sentence').innerHTML = "1ターン目の1番目に出したコトダマンのボタンを押してください．";
             }
