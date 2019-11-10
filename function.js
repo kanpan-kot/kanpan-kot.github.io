@@ -1,6 +1,6 @@
 let kotodamanNumber = 1;
 let pushedKotodamans = [];
-let bottom = 0;
+let bottom = -1;
 
 function enterKotodamanName(){
     if( window.event.keyCode == 13 ){
@@ -12,6 +12,8 @@ function enterKotodamanName(){
             document.forms.id_form1.input.value = '';
             if (kotodamanNumber == 13) {
                 document.getElementById('sentence').innerHTML = "1ターン目の1番目に出したコトダマンのボタンを押してください．";
+            } else {
+                document.getElementById('sentence').innerHTML = kotodamanNumber + "体目のコトダマンの名前を入力してください．";
             }
         }
         return false;
@@ -30,7 +32,7 @@ function getKotodaman(number) {
         } else {
             document.getElementById('sentence').innerHTML = "4ターン目の最後に引いたコトダマンのボタンを押してください．";
         }
-    } else if (kotodamanNumber > 12 && pushedKotodamans.length == 8) {
+    } else if (kotodamanNumber > 12 && pushedKotodamans.length == 8 && bottom < 0) {
         findBottom(number);
     }
 }
@@ -75,8 +77,16 @@ function resetExceptParty() {
 }
 
 function undo() {
-    if (kotodamanNumber < 12 && kotodamanNumber > 1) {
+    if (pushedKotodamans.length == 0 && kotodamanNumber > 1) {
         kotodamanNumber--;
+        document.getElementById('sentence').innerHTML = kotodamanNumber + "体目のコトダマンの名前を入力してください．";
+        document.getElementById('kotodaman' + kotodamanNumber + '_name').innerHTML = ("コトダマン" + kotodamanNumber);
+    } else if (pushedKotodamans.length > 0 && pushedKotodamans < 8 && bottom < 0) {
+        pushedKotodamans.pop();
+        document.getElementById('sentence').innerHTML = (parseInt(length / 4) + 1) + "ターン目の" + ((length % 4) + 1) + "番目に出したコトダマンのボタンを押してください．";
+    } else if (bottom >= 0) {
+        bottom = -1;
+        document.getElementById('sentence').innerHTML = "4ターン目の最後に引いたコトダマンのボタンを押してください．";
     }
 }
 
