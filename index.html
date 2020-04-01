@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HandPredictor</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+</head>
+<body>
+<h2>コトダマン手札予測ツール</h2>
+<div id="app">
+    <input v-model="input" @keyup.enter="setName" placeholder="コトダマン名を入力してください．">
+    <button @click="setName" v-if="inputCount < 12" :disabled="input == ''">決定</button>
+    <button @click="back" v-if="inputCount < 12" :disabled="inputCount == 0">戻る</button>
+    <button @click="resetCalculation" v-if="turn > 0">リセット</button>
+    <div id="control">
+        <button @click="selectKotodaman(0)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[0]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[0]) || (!isSelectHandTime && isInHand[0])))">{{kotodamanName[0]}}</button>
+        <button @click="selectKotodaman(1)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[1]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[1]) || (!isSelectHandTime && isInHand[1])))">{{kotodamanName[1]}}</button>
+        <button @click="selectKotodaman(2)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[2]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[2]) || (!isSelectHandTime && isInHand[2])))">{{kotodamanName[2]}}</button>
+        <button @click="selectKotodaman(3)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[3]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[3]) || (!isSelectHandTime && isInHand[3])))">{{kotodamanName[3]}}</button>
+        <br>
+        <button @click="selectKotodaman(4)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[4]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[4]) || (!isSelectHandTime && isInHand[4])))">{{kotodamanName[4]}}</button>
+        <button @click="selectKotodaman(5)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[5]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[5]) || (!isSelectHandTime && isInHand[5])))">{{kotodamanName[5]}}</button>
+        <button @click="selectKotodaman(6)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[6]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[6]) || (!isSelectHandTime && isInHand[6])))">{{kotodamanName[6]}}</button>
+        <button @click="selectKotodaman(7)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[7]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[7]) || (!isSelectHandTime && isInHand[7])))">{{kotodamanName[7]}}</button>
+        <br>
+        <button @click="selectKotodaman(8)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[8]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[8]) || (!isSelectHandTime && isInHand[8])))">{{kotodamanName[8]}}</button>
+        <button @click="selectKotodaman(9)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[9]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[9]) || (!isSelectHandTime && isInHand[9])))">{{kotodamanName[9]}}</button>
+        <button @click="selectKotodaman(10)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[10]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[10]) || (!isSelectHandTime && isInHand[10])))">{{kotodamanName[10]}}</button>
+        <button @click="selectKotodaman(11)" :disabled="!isCompleteFillName || (isCompleteFillName && !isCompleteFillHand && isInHand[11]) || (isCompleteFillName && isCompleteFillHand && ((isSelectHandTime && !isInHand[11]) || (!isSelectHandTime && isInHand[11])))">{{kotodamanName[11]}}</button>
+    </div>
+    <div id="result">
+        <h3>{{result}}</h3>
+        <h3>手札</h3>
+        {{hand[0]}}・{{hand[1]}}・{{hand[2]}}・{{hand[3]}}
+        <h3>引き予測</h3>
+        <p>このターンに引くのは {{predictedKotodaman[0]}} → {{predictedKotodaman[1]}} → {{predictedKotodaman[2]}} → {{predictedKotodaman[3]}}</p>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            kotodamanName: ['コトダマン1', 'コトダマン2', 'コトダマン3', 'コトダマン4',
+                'コトダマン5', 'コトダマン6', 'コトダマン7', 'コトダマン8',
+                'コトダマン9', 'コトダマン10', 'コトダマン11', 'コトダマン12'],
+            input: '',
+            inputCount: 0,
+            result: 'コトダマンの名前を入力してください',
+            handCount: 0,
+            hand: ['', '', '', ''],
+            isCompleteFillName: false,
+            isCompleteFillHand: false,
+            isSelectHandTime: true,
+            isInHand: [false, false, false, false, false, false, false, false, false, false, false, false],
+            usedKotodaman: [],
+            gottenKotodaman: [],
+            randomNumbers:[],
+            turn:0,
+            predictedKotodaman:[]
+        },
+        methods: {
+            setName: function () {
+                if (this.input == '') {
+                    alert('コトダマンの名前を入力してください．');
+                    return -1;
+                }
+                this.kotodamanName[this.inputCount] = this.input;
+                this.inputCount++;
+                this.input = '';
+
+                if (this.inputCount == 12) {
+                    this.result = '手札のコトダマンを左側から順にボタンを押してください．';
+                    this.isCompleteFillName = true;
+                }
+            },
+
+            back: function () {
+                this.inputCount--;
+                this.kotodamanName[this.inputCount] = 'コトダマン' + (this.inputCount + 1);
+                this.input = 'a';
+                this.input = '';
+            },
+
+            selectKotodaman: function (number) {
+                if (this.isCompleteFillName && !this.isCompleteFillHand) {
+                    this.hand[this.handCount] = this.kotodamanName[number];
+                    this.handCount++;
+
+                    if (this.handCount == 4) {
+                        this.result = '使ったコトダマンのボタンを押してください．';
+                        this.isCompleteFillHand = true;
+                    }
+                } else if (this.isCompleteFillHand && this.isSelectHandTime && this.turn < 16) {
+                    this.hand[this.hand.indexOf(this.kotodamanName[number])] = '';
+                    this.isSelectHandTime = false;
+                    this.usedKotodaman.push(number);
+                    this.result = '引いたコトダマンのボタンを押してください．';
+                } else if (this.isCompleteFillHand && !this.isSelectHandTime && this.turn < 16) {
+                    this.hand[this.hand.indexOf('')] = this.kotodamanName[number];
+                    this.isSelectHandTime = true;
+                    if (this.turn >= 8) {
+                        this.gottenKotodaman.push(number);
+                    }
+                    this.result = '使ったコトダマンのボタンを押してください．';
+                    this.turn++;
+                } else if (this.turn >= 16) {
+                    this.usedKotodaman.push(number);
+                    this.hand[this.hand.indexOf(this.kotodamanName[number])] = this.predictedKotodaman[0];
+                    this.predictedKotodaman.shift();
+                    this.turn++;
+
+                    if (this.turn % 8 == 0) {
+                        for(let i = 0; i < 8; i++) {
+                            this.predictedKotodaman.push(this.kotodamanName[this.usedKotodaman[this.turn - (8 - this.randomNumbers.indexOf(i))]]);
+                        }
+                    }
+                }
+                this.isInHand = [this.hand.indexOf(this.kotodamanName[0]) != -1, this.hand.indexOf(this.kotodamanName[1]) != -1,
+                    this.hand.indexOf(this.kotodamanName[2]) != -1, this.hand.indexOf(this.kotodamanName[3]) != -1,
+                    this.hand.indexOf(this.kotodamanName[4]) != -1, this.hand.indexOf(this.kotodamanName[5]) != -1,
+                    this.hand.indexOf(this.kotodamanName[6]) != -1, this.hand.indexOf(this.kotodamanName[7]) != -1,
+                    this.hand.indexOf(this.kotodamanName[8]) != -1, this.hand.indexOf(this.kotodamanName[9]) != -1,
+                    this.hand.indexOf(this.kotodamanName[10]) != -1, this.hand.indexOf(this.kotodamanName[11]) != -1];
+
+                if (this.turn == 16) {
+                    for (let i = 0; i < 8; i++) {
+                        this.randomNumbers.push(this.gottenKotodaman.indexOf(this.usedKotodaman[i]));
+                    }
+
+                    for(let i = 0; i < 8; i++) {
+                        this.predictedKotodaman.push(this.kotodamanName[this.usedKotodaman[this.turn - (8 - this.randomNumbers.indexOf(i))]]);
+                    }
+                }
+
+                console.log(this.turn);
+                console.log(this.usedKotodaman);
+                console.log(this.gottenKotodaman);
+                console.log(this.randomNumbers);
+                console.log(this.predictedKotodaman);
+                console.log('----------')
+
+                this.input = 'a';
+                this.input = '';
+            },
+
+            resetCalculation: function() {
+                this.result = '手札のコトダマンを左側から順にボタンを押してください．';
+                this.handCount = 0;
+                this.hand = ['', '', '', ''];
+                this.isCompleteFillName = true;
+                this.isCompleteFillHand = false;
+                this.isSelectHandTime = true;
+                this.isInHand = [false, false, false, false, false, false, false, false, false, false, false, false];
+                this.usedKotodaman = [];
+                this.gottenKotodaman = [];
+                this.randomNumbers = [];
+                this.turn = 0;
+                this.predictedKotodaman = [];
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
